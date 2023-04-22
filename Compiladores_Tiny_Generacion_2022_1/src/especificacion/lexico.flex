@@ -26,11 +26,11 @@ import java.io.Reader;
 /******************************************************************
 BORRAR SI NO SE NECESITA
 	//TODO: Cambiar la SF por esto o ver que se hace
-	//Crear un nuevo objeto java_cup.runtime.Symbol con información sobre el token actual sin valor
+	//Crear un nuevo objeto java_cup.runtime.Symbol con informaciï¿½n sobre el token actual sin valor
  	  private Symbol symbol(int type){
     		return new Symbol(type,yyline,yycolumn);
 	  }
-	//Crear un nuevo objeto java_cup.runtime.Symbol con información sobre el token actual con valor
+	//Crear un nuevo objeto java_cup.runtime.Symbol con informaciï¿½n sobre el token actual con valor
 	  private Symbol symbol(int type,Object value){
     		return new Symbol(type,yyline,yycolumn,value);
 	  }
@@ -46,12 +46,12 @@ BORRAR SI NO SE NECESITA
 
 
 
-digito		= [0-9]
-numero		= {digito}+
+digito		    = [0-9]
+numero		    = {digito}+
 letra			= [a-zA-Z]
 identificador	= {letra}+
 nuevalinea		= \n | \n\r | \r\n
-espacio		= [ \t]+
+espacio		    = [ \t]+
 %%
 "if"            {	if(debug) System.out.println("token IF");
 			return sf.newSymbol("IF",sym.IF);
@@ -86,6 +86,9 @@ espacio		= [ \t]+
 "<"             {	if(debug) System.out.println("token LT");
 			return sf.newSymbol("LT",sym.LT);
 			}
+">"             {	if(debug) System.out.println("token GR");
+			return sf.newSymbol("GR",sym.GR);
+			}
 "+"             {	if(debug) System.out.println("token PLUS");
 			return sf.newSymbol("PLUS",sym.PLUS);
 			}
@@ -107,6 +110,21 @@ espacio		= [ \t]+
 ";"             {	if(debug) System.out.println("token SEMI");
 			return sf.newSymbol("SEMI",sym.SEMI);
 			}
+">="            {    if(debug) System.out.println("token GREATER_EQUAL");
+            return sf.newSymbol("GREATER_EQUAL",sym.GREATER_EQUAL);
+            }
+"<="            {    if(debug) System.out.println("token LESS_EQUAL");
+            return sf.newSymbol("LESS_EQUAL",sym.LESS_EQUAL);
+            }
+"!="            {    if(debug) System.out.println("token DIFFERENT");
+            return sf.newSymbol("DIFFERENT",sym.DIFFERENT);
+            }
+"&&"            {    if(debug) System.out.println("token AND");
+            return sf.newSymbol("AND",sym.AND);
+            }
+"||"            {    if(debug) System.out.println("token OR");
+          return sf.newSymbol("OR",sym.OR);
+          }
 {numero}        {	if(debug) System.out.println("token NUM");
 			return sf.newSymbol("NUM",sym.NUM,new String(yytext()));
 			}
