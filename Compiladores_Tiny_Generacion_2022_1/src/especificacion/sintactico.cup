@@ -94,7 +94,12 @@ non terminal NodoBase factor;
 precedence left PLUS;
 precedence left MINUS;
 precedence left TIMES;
-
+precedence left GR;
+precedence left GREATER_EQUAL;
+precedence left LESS_EQUAL;
+precedence left DIFFERENT;
+precedence left OR;
+precedence left AND;
 
 /* REGLAS GRAMATICALES */
 program     ::= stmt_seq:s	{: if(debug) System.out.println("\t regla 1"); 
