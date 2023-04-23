@@ -6,34 +6,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class Generador {
-	/* Ilustracion de la disposicion de la memoria en
-	 * este ambiente de ejecucion para el lenguaje Tiny
-	 *
-	 * |t1	|<- mp (Maxima posicion de memoria de la TM
-	 * |t1	|<- desplazamientoTmp (tope actual)
-	 * |free|
-	 * |free|
-	 * |...	|
-	 * |x	|
-	 * |y	|<- gp
-	 * 
-	 * */
-
-	/* desplazamientoTmp es una variable inicializada en 0
-	 * y empleada como el desplazamiento de la siguiente localidad
-	 * temporal disponible desde la parte superior o tope de la memoria
-	 * (la que apunta el registro MP).
-	 * 
-	 * - Se decrementa (desplazamientoTmp--) despues de cada almacenamiento y
-	 * 
-	 * - Se incrementa (desplazamientoTmp++) despues de cada eliminacion/carga en 
-	 *   otra variable de un valor de la pila.
-	 * 
-	 * Pudiendose ver como el apuntador hacia el tope de la pila temporal
-	 * y las llamadas a la funcion emitirRM corresponden a una inserccion 
-	 * y extraccion de esta pila
-	 */
-	private static int desplazamientoTmp = 0;
 	private static TablaSimbolos tablaSimbolos = null;
 	private static int currentBlock = 0;
 	private static BufferedWriter bw = null;
@@ -53,8 +25,6 @@ public class Generador {
 
 		if (UtGenP.debug) UtGenP.comment("<- Fin de la ejecucion", bw);
 		System.out.println();
-		System.out.println();
-
 	}
 	
 	//Funcion principal de generacion de codigo
@@ -99,15 +69,14 @@ public class Generador {
 
 		generar(n.getPrueba());
 		labelElse = jump();
-		UtGenP.instruction("FJP", labelElse, "if: jmp - else", bw);
-
+		UtGenP.instruction("FJP", labelElse, "if false: JMP - else", bw);
 		/*Genero la parte THEN*/
 		generar(n.getParteThen());
 
 		/*Genero la parte ELSE*/
 		if( n.getParteElse() != null) {
 			labelFalse = jump();
-			UtGenP.instruction("UJP", labelFalse, "label: ujp", bw);
+			UtGenP.instruction("UJP", labelFalse, "label: UJP", bw);
     	}
 
 		UtGenP.instruction("LAB", labelElse, "label: jmp", bw);
@@ -116,7 +85,7 @@ public class Generador {
 
 		if( labelFalse != null ){
 			generar(n.getParteElse());
-			UtGenP.instruction("LAB", labelFalse, "label: ujp", bw);
+			UtGenP.instruction("LAB", labelFalse, "label: UJP", bw);
 			Label l1 = new Label(UtGenP.lineNumber(), labelFalse);
 			labels.add(l1);
 		}
@@ -129,16 +98,16 @@ public class Generador {
 		String labelRepeat;
 
 		if(UtGenP.debug) UtGenP.comment("-> repeat", bw);
+
 		labelRepeat = jump();
 		UtGenP.instruction("LAB", labelRepeat, "label: repeat", bw);
-		Label l1 = new Label(UtGenP.lineNumber(),labelRepeat);
-		labels.add(l1);
-
+		Label l = new Label(UtGenP.lineNumber(),labelRepeat);
+		labels.add(l);
 		/* Genero el cuerpo del repeat */
 		generar(n.getCuerpo());
 		/* Genero el codigo de la prueba del repeat */
 		generar(n.getPrueba());
-		UtGenP.instruction("FJP", labelRepeat, "repeat: jmp hacia el inicio del cuerpo", bw);
+		UtGenP.instruction("FJP", labelRepeat, "repeat: JMP - inicio del cuerpo", bw);
 
 		if(UtGenP.debug) UtGenP.comment("<- repeat", bw);
 	}		
@@ -146,14 +115,10 @@ public class Generador {
 	private static void generarAsignacion(NodoBase nodo){
 		NodoAsignacion n = (NodoAsignacion)nodo;
 		int direccion;
-
-		if ( n.getVariable() instanceof NodoIdentificador) {
-			NodoIdentificador nIdentificador = (NodoIdentificador)n.getVariable();
-			direccion = tablaSimbolos.getDireccion(nIdentificador.getNombre(), currentBlock);
-			UtGenP.instruction("LDA", direccion , "cargar direccion de identificador: "+n.getIdentificador(), bw);
-			generar(n.getExpresion());
-			UtGenP.instruction("STO", "asignacion: almaceno el valor para el id "+n.getIdentificador(), bw);
-		}
+		direccion = tablaSimbolos.getDireccion(n.getIdentificador(), currentBlock);
+		UtGenP.instruction("LDA", direccion , "cargar direccion de identificador: "+n.getIdentificador(), bw);
+		generar(n.getExpresion());
+		UtGenP.instruction("STO", "asignacion: valor - id "+n.getIdentificador(), bw);
 	}
 	
 	private static void generarLeer(NodoBase nodo){
@@ -235,20 +200,11 @@ public class Generador {
 							break;
 			case	entre:	UtGenP.instruction("DVI", "op: /", bw);
 							break;		
-			//case	menor:	UtGenP.instruction("SBI", "op: <", bw);
-			//				UtGenP.instruction("FJP", "voy dos instrucciones mas alla if verdadero (AC<0)", bw);
-			//				UtGenP.instruction("LDC", "caso de falso (AC=0)", bw);
-			//				UtGenP.instruction("LDA", "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)", bw);
-			//				UtGenP.instruction("LDC", "caso de verdadero (AC=1)", bw);
-			//				break;
+			case	menor:	UtGenP.instruction("LST", "op: <", bw);
+							break;
 			case	igual:	UtGenP.instruction("EQU", "op: ==", bw);
-			//				UtGenP.instruction("FJP", "voy dos instrucciones mas alla if verdadero (AC==0)", bw);
-			//				UtGenP.instruction("LDC", "caso de falso (AC=0)", bw);
-			//				UtGenP.instruction("LDA", "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)", bw);
-			//				UtGenP.instruction("LDC", "caso de verdadero (AC=1)", bw);
-			//				break;
-
-			case 	mayor:  /* mandar a emitir*/
+							break;
+			case 	mayor:  UtGenP.instruction("GTR", "op: >", bw);
 							break;
 			case 	mayor_igual: /* mandar a emitir*/
 							break;
@@ -261,20 +217,18 @@ public class Generador {
 			case 	or:  /* mandar a emitir*/
 							break;
 			default:
-							UtGen.emitirComentario("BUG: tipo de operacion desconocida");
+							UtGenP.comment("BUG: tipo de operacion desconocida", bw);
 		}
-		if(UtGen.debug)	UtGen.emitirComentario("<- Operacion: " + n.getOperacion());
+		if(UtGenP.debug)	UtGenP.comment("<- Operacion: " + n.getOperacion(), bw);
 	}
 
 	public static String jump() {
 		cont++;
-		return ""+cont;
+		return "L"+cont;
 	}
 
 	private static void generarPreludioEstandar(){
 		System.out.println("Compilacion TINY - Codigo P");
-		System.out.println("Archivo: "+ "factorial");
-		System.out.println();
 		System.out.println();
 	}
 }
