@@ -91,8 +91,8 @@ espacio		    = [ \t]+
 "<"             {	if(debug) System.out.println("token LT");
 			return sf.newSymbol("LT",sym.LT);
 			}
-">"             {	if(debug) System.out.println("token GR");
-			return sf.newSymbol("GR",sym.GR);
+">"             {	if(debug) System.out.println("token GRT");
+			return sf.newSymbol("GRT",sym.GRT);
 			}
 "+"             {	if(debug) System.out.println("token PLUS");
 			return sf.newSymbol("PLUS",sym.PLUS);
@@ -111,6 +111,12 @@ espacio		    = [ \t]+
 			}
 ")"             {	if(debug) System.out.println("token RPAREN");
 			return sf.newSymbol("RPAREN",sym.RPAREN);
+			}
+"["             {	if(debug) System.out.println("token LBRACKET");
+			return sf.newSymbol("LBRACKET",sym.LBRACKET);
+			}
+"]"             {	if(debug) System.out.println("token RBRACKET");
+			return sf.newSymbol("RBRACKET",sym.RBRACKET);
 			}
 ";"             {	if(debug) System.out.println("token SEMI");
 			return sf.newSymbol("SEMI",sym.SEMI);

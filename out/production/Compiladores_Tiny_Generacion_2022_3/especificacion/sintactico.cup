@@ -71,13 +71,15 @@ terminal OVER;
 terminal LPAREN;
 terminal RPAREN;
 terminal SEMI;
-terminal GR;
+terminal GRT;
 terminal GREATER_EQUAL;
 terminal LESS_EQUAL;
 terminal DIFFERENT;
 terminal OR;
 terminal AND;
 terminal ARRAY;
+terminal LBRACKET;
+terminal RBRACKET;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -99,12 +101,6 @@ non terminal NodoBase array_stmt;
 precedence left PLUS;
 precedence left MINUS;
 precedence left TIMES;
-precedence left GR;
-precedence left GREATER_EQUAL;
-precedence left LESS_EQUAL;
-precedence left DIFFERENT;
-precedence left OR;
-precedence left AND;
 
 /* REGLAS GRAMATICALES */
 program     ::= stmt_seq:s	{: if(debug) System.out.println("\t regla 1"); 
@@ -208,7 +204,7 @@ exp         ::= simple_exp:exI LT simple_exp:exD	{: if(debug) System.out.println
 		| simple_exp:ex	{: if(debug) System.out.println("\t regla 9c"); 
 					RESULT = ex;
 					:}
-        | simple_exp:exI GR simple_exp:exD	{: if(debug) System.out.println("\t regla 9d");
+        | simple_exp:exI GRT simple_exp:exD	{: if(debug) System.out.println("\t regla 9d");
                     RESULT = new NodoOperacion(exI,tipoOp.mayor,exD);
                     :}
         | simple_exp:exI LESS_EQUAL simple_exp:exD	{: if(debug) System.out.println("\t regla 9e");
@@ -265,6 +261,9 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 1
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
+	    |LBRACKET exp:ex RBRACKET	{: if(debug) System.out.println("\t regla 12e");
+                    RESULT = ex;
+                    :}
 		| error	{: if(debug) System.out.println("\t regla 12d"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;

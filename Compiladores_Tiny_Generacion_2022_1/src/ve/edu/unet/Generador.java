@@ -206,15 +206,15 @@ public class Generador {
 							break;
 			case 	mayor:  UtGenP.instruction("GTR", "op: >", bw);
 							break;
-			case 	mayor_igual: /* mandar a emitir*/
+			case 	mayor_igual: UtGenP.instruction("GREATER_EQUAL", "op: >=", bw);
 							break;
-			case 	menor_igual: /* mandar a emitir*/
+			case 	menor_igual: UtGenP.instruction("LESS_EQUAL", "op: <=", bw);
 							break;
-			case 	diferente: /* mandar a emitir*/
+			case 	diferente: UtGenP.instruction("DIFFERENT", "op: !=", bw);
 							break;
-			case 	and: /* mandar a emitir*/
+			case 	and: UtGenP.instruction("AND", "op: &&", bw);
 							break;
-			case 	or:  /* mandar a emitir*/
+			case 	or:  UtGenP.instruction("OR", "op: ||", bw);
 							break;
 			default:
 							UtGenP.comment("BUG: tipo de operacion desconocida", bw);
