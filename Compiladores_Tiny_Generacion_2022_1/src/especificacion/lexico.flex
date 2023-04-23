@@ -112,6 +112,12 @@ espacio		    = [ \t]+
 ")"             {	if(debug) System.out.println("token RPAREN");
 			return sf.newSymbol("RPAREN",sym.RPAREN);
 			}
+"["             {	if(debug) System.out.println("token LBRACKET");
+			return sf.newSymbol("LBRACKET",sym.LBRACKET);
+			}
+"]"             {	if(debug) System.out.println("token RBRACKET");
+			return sf.newSymbol("RBRACKET",sym.RBRACKET);
+			}
 ";"             {	if(debug) System.out.println("token SEMI");
 			return sf.newSymbol("SEMI",sym.SEMI);
 			}

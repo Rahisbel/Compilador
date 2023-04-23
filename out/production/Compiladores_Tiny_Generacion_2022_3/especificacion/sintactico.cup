@@ -78,6 +78,8 @@ terminal DIFFERENT;
 terminal OR;
 terminal AND;
 terminal ARRAY;
+terminal LBRACKET;
+terminal RBRACKET;
 
 /* Simbolos No Terminales */
 non terminal program;
@@ -259,6 +261,9 @@ factor      ::= LPAREN exp:ex RPAREN	{: if(debug) System.out.println("\t regla 1
 						System.out.println("Ocurrio error en cup # 0005");
 					}
 					:}
+	    |LBRACKET exp:ex RBRACKET	{: if(debug) System.out.println("\t regla 12e");
+                    RESULT = ex;
+                    :}
 		| error	{: if(debug) System.out.println("\t regla 12d"); 
 				System.out.println("Ocurrio error en cup # 0003");
 				RESULT=null;
