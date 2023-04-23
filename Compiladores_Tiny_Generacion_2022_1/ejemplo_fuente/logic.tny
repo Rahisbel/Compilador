@@ -1,0 +1,6 @@
+read y;
+y:= true;
+x:= false;
+z:=y and x;
+    write z;
+end
