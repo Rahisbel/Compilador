@@ -101,6 +101,18 @@ static void imprimirNodo( NodoBase raiz )
 			System.out.println("*");
 		if(sel==tipoOp.entre)
 			System.out.println("/");
+		if(sel==tipoOp.mayor)
+			System.out.println(">");
+		if(sel==tipoOp.mayor_igual)
+			System.out.println(">=");
+		if(sel==tipoOp.menor_igual)
+			System.out.println("<=");
+		if(sel==tipoOp.diferente)
+			System.out.println("!=");
+		if(sel==tipoOp.and)
+			System.out.println("&&");
+		if(sel==tipoOp.or)
+			System.out.println("||");
 	}
 
 	if(	raiz instanceof NodoValor ){
@@ -112,6 +124,5 @@ static void imprimirNodo( NodoBase raiz )
 	}
 
 }
-
 
 }

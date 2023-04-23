@@ -115,10 +115,28 @@ public class Generador {
 	private static void generarAsignacion(NodoBase nodo){
 		NodoAsignacion n = (NodoAsignacion)nodo;
 		int direccion;
-		direccion = tablaSimbolos.getDireccion(n.getIdentificador(), currentBlock);
-		UtGenP.instruction("LDA", direccion , "cargar direccion de identificador: "+n.getIdentificador(), bw);
-		generar(n.getExpresion());
-		UtGenP.instruction("STO", "asignacion: valor - id "+n.getIdentificador(), bw);
+
+		if(n.getVariable()  instanceof  NodoArray){
+			NodoArray variable = (NodoArray)n.getVariable();
+			NodoIdentificador identificador_vector = (NodoIdentificador)variable.getIdentificador();
+			direccion = tablaSimbolos.getDireccion(identificador_vector.getNombre(), currentBlock);
+			UtGenP.instruction("LDA", direccion , "cargar direccion de identificador: "+identificador_vector.getNombre(), bw);
+
+			if (variable.getExpresion() instanceof NodoOperacion){
+				generarOperacion(variable.getExpresion(), true);
+			}else{
+				generar(variable.getExpresion());
+			}
+
+			UtGenP.instruction("IXA", "1" , "cargar direccion de identificador: "+identificador_vector.getNombre(), bw);
+			generar(n.getExpresion());
+			UtGenP.instruction("STO", "asignacion: almaceno el valor para el id "+identificador_vector.getNombre(), bw);
+		} else {
+			direccion = tablaSimbolos.getDireccion(n.getIdentificador(), currentBlock);
+			UtGenP.instruction("LDA", direccion , "cargar direccion de identificador: "+n.getIdentificador(), bw);
+			generar(n.getExpresion());
+			UtGenP.instruction("STO", "asignacion: valor - id "+n.getIdentificador(), bw);
+		}
 	}
 	
 	private static void generarLeer(NodoBase nodo){
