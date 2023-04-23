@@ -91,8 +91,8 @@ espacio		    = [ \t]+
 "<"             {	if(debug) System.out.println("token LT");
 			return sf.newSymbol("LT",sym.LT);
 			}
-">"             {	if(debug) System.out.println("token GR");
-			return sf.newSymbol("GR",sym.GR);
+">"             {	if(debug) System.out.println("token GRT");
+			return sf.newSymbol("GRT",sym.GRT);
 			}
 "+"             {	if(debug) System.out.println("token PLUS");
 			return sf.newSymbol("PLUS",sym.PLUS);

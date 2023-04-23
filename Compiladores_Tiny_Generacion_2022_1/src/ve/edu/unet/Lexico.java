@@ -825,8 +825,8 @@ BORRAR SI NO SE NECESITA
             // fall through
           case 44: break;
           case 14:
-            { if(debug) System.out.println("token GR");
-			return sf.newSymbol("GR",sym.GR);
+            { if(debug) System.out.println("token GRT");
+			return sf.newSymbol("GRT",sym.GRT);
             }
             // fall through
           case 45: break;

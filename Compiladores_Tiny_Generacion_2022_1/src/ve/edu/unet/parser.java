@@ -8,6 +8,7 @@ package ve.edu.unet;
 import java_cup.runtime.*;
 import ve.edu.unet.nodosAST.*;
 import java.io.InputStreamReader;
+import java.io.BufferedReader;
 import java_cup.runtime.XMLElement;
 
 /** CUP v0.11b 20160615 (GIT 4ac7450) generated parser.
@@ -271,6 +272,7 @@ class CUP$parser$actions {
 	private boolean debug=true;
 	private NodoBase ast=null;
 	private int lineanum=0;
+	private int contBloque = 0;
 	
 	//Debe ser llamada solo despues de un parse(), en caso contrario retornara null siempre;
 	public NodoBase getASTroot(){
@@ -653,7 +655,7 @@ class CUP$parser$actions {
           return CUP$parser$result;
 
           /*. . . . . . . . . . . . . . . . . . . .*/
-          case 22: // exp ::= simple_exp GR simple_exp 
+          case 22: // exp ::= simple_exp GRT simple_exp 
             {
               NodoBase RESULT =null;
 		int exIleft = ((java_cup.runtime.Symbol)CUP$parser$stack.elementAt(CUP$parser$top-2)).left;

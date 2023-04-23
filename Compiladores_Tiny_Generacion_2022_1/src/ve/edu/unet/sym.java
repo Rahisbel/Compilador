@@ -25,9 +25,9 @@ public class sym {
   public static final int GREATER_EQUAL = 23;
   public static final int IF = 2;
   public static final int LPAREN = 19;
+  public static final int GRT = 22;
   public static final int WRITE = 9;
   public static final int ID = 10;
-  public static final int GR = 22;
   public static final int NUM = 11;
   public static final int EOF = 0;
   public static final int MINUS = 16;
@@ -60,7 +60,7 @@ public class sym {
   "LPAREN",
   "RPAREN",
   "SEMI",
-  "GR",
+  "GRT",
   "GREATER_EQUAL",
   "LESS_EQUAL",
   "DIFFERENT",
