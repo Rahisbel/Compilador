@@ -35,6 +35,7 @@ public class sym {
   public static final int UNTIL = 7;
   public static final int ASSIGN = 12;
   public static final int EQ = 13;
+  public static final int ARRAY = 28;
   public static final int REPEAT = 6;
   public static final String[] terminalNames = new String[] {
   "EOF",
@@ -64,7 +65,8 @@ public class sym {
   "LESS_EQUAL",
   "DIFFERENT",
   "OR",
-  "AND"
+  "AND",
+  "ARRAY"
   };
 }
 

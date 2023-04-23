@@ -21,6 +21,8 @@ import java.io.Reader;
 	private SymbolFactory sf;
 	private int lineanum;
 	private boolean debug;
+    private int integerN;
+    private char varChar;
 
 
 /******************************************************************
@@ -76,6 +78,9 @@ espacio		    = [ \t]+
 			}
 "write"         {	if(debug) System.out.println("token WRITE");
 			return sf.newSymbol("WRITE",sym.WRITE);
+			}
+"array" 		{	if(debug) System.out.println("token ARRAY");
+			return sf.newSymbol("ARRAY",sym.ARRAY);
 			}
 ":="            {	if(debug) System.out.println("token ASSIGN");
 			return sf.newSymbol("ASSIGN",sym.ASSIGN);
