@@ -2,13 +2,8 @@ package ve.edu.unet;
 
 import ve.edu.unet.nodosAST.*;
 import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Generador {
 	/* Ilustracion de la disposicion de la memoria en
@@ -80,8 +75,11 @@ public class Generador {
 			generarValor(nodo);
 		}else if (nodo instanceof NodoIdentificador){
 			generarIdentificador(nodo);
-		}else if (nodo instanceof NodoOperacion){
-			generarOperacion(nodo);
+		}else if (nodo instanceof NodoArray){
+			generarArray(nodo);
+		}
+		else if (nodo instanceof NodoOperacion){
+			generarOperacion(nodo, false);
 		}else{
 			System.out.println("BUG: Tipo de nodo a generar desconocido");
 		}
@@ -192,35 +190,44 @@ public class Generador {
 		NodoIdentificador n = (NodoIdentificador)nodo;
 		int direccion;
 		direccion = tablaSimbolos.getDireccion(n.getNombre(), currentBlock);
-		UtGenP.instruction("LOD", direccion, "id: cargar valor de identificador: "+n.getNombre(), bw);
+		UtGenP.instruction("LOD", direccion, "id: carga valor de identificador: "+n.getNombre(), bw);
 	}
 
-	private static void generarOperacion(NodoBase nodo){
+	private static void generarArray(NodoBase nodo){
+		NodoArray n = (NodoArray) nodo;
+		NodoIdentificador ni = (NodoIdentificador) n.getIdentificador();
+		int direccion = tablaSimbolos.getDireccion(ni.getNombre(),currentBlock);
+		UtGenP.instruction("LDA",direccion, "vector: carga direccion de la variable: "+ni.getNombre(), bw);
+
+		if (n.getExpresion() instanceof NodoOperacion){
+			generarOperacion(n.getExpresion(), true);
+		}else{
+			generar(n.getExpresion());
+		}
+
+		UtGenP.instruction("IXA", "1", "carga: direccion de la posicion del vector: "+ni.getNombre(), bw);
+		UtGenP.instruction("IND", 0,"carga: valor de la direccion anterior", bw);
+	}
+
+	private static void generarOperacion(NodoBase nodo, boolean array){
 		NodoOperacion n = (NodoOperacion) nodo;
 
-		if (n.getOperacion() == tipoOp.menor){
+		if (n.getOperacion() == tipoOp.menor && array == false){
 			generar(n.getOpDerecho());
 			generar(n.getOpIzquierdo());
 			UtGenP.instruction("GRT", "A mayor que B: B<A", bw);
 			return;
 		}
 
-		//if ((n.getOperacion() == tipoOp.menor || n.getOperacion() == tipoOp.igual)){
-		//	if(UtGenP.debug) UtGenP.comment("Error fatal! vector con argumento < o =", bw);
-		//	System.out.print("Error fatal! vector con argumento del vector < o =");
-		//	try {
-		//		bw.close();
-		//	} catch (IOException ex) {
-		//		System.out.println("---------");
-		//	}
-		//	System.exit(0);
-		//}
+		if ((n.getOperacion() == tipoOp.menor || n.getOperacion() == tipoOp.igual) && array == true){
+			if(UtGenP.debug) UtGenP.comment("error: vector con argumento < o =", bw);
+		}
 
 		generar(n.getOpIzquierdo());
 		generar(n.getOpDerecho());
 
 		switch(n.getOperacion()){
-			case	mas:	UtGenP.instruction("ADI", "suma: +", bw);
+			case	mas:	UtGenP.instruction("ADI", "op: +", bw);
 							break;
 			case	menos:	UtGenP.instruction("SBI", "op: -", bw);
 							break;
@@ -228,25 +235,19 @@ public class Generador {
 							break;
 			case	entre:	UtGenP.instruction("DVI", "op: /", bw);
 							break;		
-			case	menor:	UtGenP.instruction("SBI", "op: <", bw);
-							UtGenP.instruction("FJP", "voy dos instrucciones mas alla if verdadero (AC<0)", bw);
-							UtGenP.instruction("LDC", "caso de falso (AC=0)", bw);
-							UtGenP.instruction("LDA", "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)", bw);
-							UtGenP.instruction("LDC", "caso de verdadero (AC=1)", bw);
-							break;
-			case	igual:	UtGenP.instruction("SBI", "op: ==", bw);
-							UtGenP.instruction("FJP", "voy dos instrucciones mas alla if verdadero (AC==0)", bw);
-							UtGenP.instruction("LDC", "caso de falso (AC=0)", bw);
-							UtGenP.instruction("LDA", "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)", bw);
-							UtGenP.instruction("LDC", "caso de verdadero (AC=1)", bw);
-							break;
-
-			//case	igual:	UtGen.emitirRO("SUB", UtGen.AC, UtGen.AC1, UtGen.AC, "op: ==");
-			//				UtGen.emitirRM("JEQ", UtGen.AC, 2, UtGen.PC, "voy dos instrucciones mas alla if verdadero (AC==0)");
-			//				UtGen.emitirRM("LDC", UtGen.AC, 0, UtGen.AC, "caso de falso (AC=0)");
-			//				UtGen.emitirRM("LDA", UtGen.PC, 1, UtGen.PC, "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)");
-			//				UtGen.emitirRM("LDC", UtGen.AC, 1, UtGen.AC, "caso de verdadero (AC=1)");
+			//case	menor:	UtGenP.instruction("SBI", "op: <", bw);
+			//				UtGenP.instruction("FJP", "voy dos instrucciones mas alla if verdadero (AC<0)", bw);
+			//				UtGenP.instruction("LDC", "caso de falso (AC=0)", bw);
+			//				UtGenP.instruction("LDA", "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)", bw);
+			//				UtGenP.instruction("LDC", "caso de verdadero (AC=1)", bw);
 			//				break;
+			case	igual:	UtGenP.instruction("EQU", "op: ==", bw);
+			//				UtGenP.instruction("FJP", "voy dos instrucciones mas alla if verdadero (AC==0)", bw);
+			//				UtGenP.instruction("LDC", "caso de falso (AC=0)", bw);
+			//				UtGenP.instruction("LDA", "Salto incodicional a direccion: PC+1 (es falso evito colocarlo verdadero)", bw);
+			//				UtGenP.instruction("LDC", "caso de verdadero (AC=1)", bw);
+			//				break;
+
 			case 	mayor:  /* mandar a emitir*/
 							break;
 			case 	mayor_igual: /* mandar a emitir*/
@@ -276,6 +277,4 @@ public class Generador {
 		System.out.println();
 		System.out.println();
 	}
-
-
 }
