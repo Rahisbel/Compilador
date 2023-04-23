@@ -1,0 +1,5 @@
+read y;
+y:=9;
+x := y + 1;
+    write x;
+end
