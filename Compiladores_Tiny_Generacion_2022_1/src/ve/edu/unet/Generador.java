@@ -10,7 +10,7 @@ public class Generador {
 	private static int currentBlock = 0;
 	private static BufferedWriter bw = null;
 	private static int cont = 0;
-	private static ArrayList<Label> labels = new ArrayList<Label>();;
+	private static ArrayList<Label> labels = new ArrayList<Label>();
 	public static void setTablaSimbolos(TablaSimbolos tabla){
 		tablaSimbolos = tabla;
 	}
